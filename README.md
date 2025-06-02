@@ -1,39 +1,38 @@
 # WhatsApp ChatGPT Integration using Django
 
-This project connects OpenAI's ChatGPT with WhatsApp using Django and the WhatsApp Cloud API. It includes setup using a virtual environment, local development server, and ngrok for webhook testing.
+This project integrates OpenAI's ChatGPT with WhatsApp using Django and the WhatsApp Cloud API. It includes steps to configure Meta Developer credentials, run a local server with Django, and expose it using ngrok for webhook testing.
 
 ---
 
-## 🚀 Setup Instructions
+## 🚀 Project Setup
 
 ### 1. Clone the Repository
 
-* https://github.com/ajinasanthosh1997/whatsapp-cahtbot.git
-
-* cd whatsapp-cahtbot
-
+* git clone https://github.com/your-username/whatsapp-chatgpt-django.git
+* cd whatsapp-chatgpt-django
+  
 ### 2. Create and Activate Virtual Environment
 
-#### For macOS/Linux:
+#### macOS/Linux:
 * python3 -m venv venv
 * source venv/bin/activate
 
-#### For Windows:
+#### Windows:
+
 * python -m venv venv
 * venv\Scripts\activate
-
-### 3. Install Required Dependencies
-
-* pip install -r req.txt
-
-### 4. Create Environment File
-Create a .env file in your project root and add the following variables:
+  
+### 3. Install Dependencies
+  
+* pip install -r requirements.txt
+  
+### 4. Create .env File
 
 OPENAI_API_KEY=your_openai_key
 
 OPENAI_MODEL=gpt-3.5-turbo
 
-WHATSAPP_TOKEN=your_whatsapp_token
+WHATSAPP_TOKEN=your_whatsapp_access_token
 
 WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
 
@@ -41,56 +40,98 @@ WHATSAPP_APP_SECRET=your_app_secret
 
 VERIFY_TOKEN=your_custom_verify_token
 
-### 5. Run Migrations and Start Server
+⚠️ Never commit your .env file to version control.
+
+### 5. Meta (Facebook Developer) Setup Guide
+   
+#### 🔧 Create Your App and Get WhatsApp API Credentials
+
+* Go to https://developers.facebook.com
+
+* Click "My Apps" > "Create App"
+
+* Choose "Business" as the app type.
+
+* Fill out app details and click "Create App".
+
+* In your app dashboard, add "WhatsApp" as a product.
+
+* Under WhatsApp > Getting Started, you’ll find:
+
+* WHATSAPP_TOKEN → Temporary access token (use this for development).
+
+* WHATSAPP_PHONE_NUMBER_ID → Phone number ID.
+
+* Business Account ID (not needed for .env but visible here).
+
+* Click "Add Phone Number" to link your test number.
+
+* Save the credentials and use them in your .env.
+
+#### 6. Set Up Webhook
+
+* Go to WhatsApp > Configuration > Webhooks in the Meta Developer portal.
+
+* Set the Callback URL to your ngrok HTTPS URL (see below) + /webhook/, for example:
+
+* https://abcd1234.ngrok.io/webhook/
+Set the Verify Token to the same value as VERIFY_TOKEN in your .env.
+
+Subscribe to messages event.
+
+### 7. Run Django Server
 
 * python manage.py migrate
 * python manage.py runserver
+  
+### 8. Expose Server with Ngrok
 
-The server will run at:
-👉 http://127.0.0.1:8000/
-
-### 6. Expose Local Server using Ngrok
-Install ngrok and expose the Django server:
+Install ngrok from https://ngrok.com and run:
 
 * ngrok http 8000
+  
+Use the HTTPS URL provided by ngrok as your webhook base URL.
 
-You will receive a URL like:
+### 🧪 Testing WhatsApp
 
-Forwarding https://abcd1234.ngrok.io -> http://127.0.0.1:8000
+Send a message from your test WhatsApp number to the test phone number from Meta.
 
-Use this ngrok HTTPS URL when setting up the webhook in the Meta Developer Portal.
+OpenAI's response will be returned via your webhook and sent back to WhatsApp.
 
-### 🌐 WhatsApp Webhook Setup
-Configure your webhook with:
+All messages and responses are stored in your database (Conversation, Message models).
 
-Callback URL:
-https://abcd1234.ngrok.io/webhook/
+### ✅ Sample .env
 
-Verify Token:
-The same value as VERIFY_TOKEN from .env
+OPENAI_API_KEY=sk-...
 
-### 💡 Tips
-Use python manage.py createsuperuser to access the Django admin panel.
+OPENAI_MODEL=gpt-3.5-turbo
 
-Ngrok URLs change unless you have a paid plan. Update the webhook when restarting ngrok.
+WHATSAPP_TOKEN=EAA...
 
-Don't commit .env to version control (add it to .gitignore).
+WHATSAPP_PHONE_NUMBER_ID=123456789012345
 
-## 📌 Common Commands
+WHATSAPP_APP_SECRET=abc123...
+
+VERIFY_TOKEN=my_custom_token
+
+### 🧾 Example Requirements
+
+Django>=4.2
+openai>=1.0
+python-dotenv
+requests
+
+### 📌 Commands Reference
 
 #### Activate virtual environment
-* source venv/bin/activate   # macOS/Linux
-* venv\Scripts\activate      # Windows
+
+* source venv/bin/activate  # macOS/Linux
+* venv\Scripts\activate     # Windows
 
 #### Run development server
-python manage.py runserver
 
-#### Expose server via ngrok
-ngrok http 8000
-📦 Example Requirements
-Make sure your requirements.txt includes:
+* python manage.py runserver
 
-* Django>=4.2
-* openai>=1.0
-* python-dotenv
-* requests
+#### Start ngrok tunnel
+
+* ngrok http 8000
