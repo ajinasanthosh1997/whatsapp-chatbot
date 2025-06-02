@@ -8,9 +8,9 @@ This project connects OpenAI's ChatGPT with WhatsApp using Django and the WhatsA
 
 ### 1. Clone the Repository
 
-* git clone https://github.com/your-username/whatsapp-chatgpt-django.git
+* https://github.com/ajinasanthosh1997/whatsapp-cahtbot.git
 
-* cd whatsapp-chatgpt-django
+* cd whatsapp-cahtbot
 
 ### 2. Create and Activate Virtual Environment
 
